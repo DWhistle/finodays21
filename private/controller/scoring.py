@@ -11,5 +11,6 @@ scoring_api = Blueprint("scoring", __name__, url_prefix="/scoring")
 def score():
     req = request.get_json()
     clean_text = re.sub('[,.\s]', ' ', req['text'])
-    return jsonify(predict(clean_text))
+    predicted = predict(clean_text)
+    return jsonify({'positive': predicted.positive, 'negative': predicted.negative, 'neutral': predicted.neutral, 'message': ''})
 
