@@ -12,5 +12,6 @@ PredictResult = namedtuple('PredictResult', ['neutral', 'negative', 'positive'])
 def predict(text):
     inputs = tokenizer(text, max_length=512, padding=True, truncation=True, return_tensors='pt')
     outputs = model(**inputs)
-    predicted = torch.nn.functional.softmax(outputs.logits, dim=1)
-    return PredictResult(predicted[0], predicted[1], predicted[2])
+    predicted = torch.nn.functional.softmax(outputs.logits, dim=1)[0]
+    predicted = list(map(lambda t: float(t) * 100, predicted))
+    return PredictResult(int(predicted[0]), int(predicted[2]), int(predicted[1]))
