@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx:latest
+    depends_on:
+      - app
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./log/nginx:/var/log/nginx
+    ports:
+      - 80:80
+  app:
+    image: application
+    build:
+      context: .
+    entrypoint: uwsgi --ini uwsgi.ini
+    volumes:
+      - ./:/home/appuser/app
+      - ./log/app:/var/log/app
+    ports:
+      - 8080:5000
+    environment:
+      - FLASK_ENV=development
+      - SETTINGS_FILE=../config.cfg
+      - FLASK_APP=app.py
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
